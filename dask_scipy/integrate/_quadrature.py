@@ -3,7 +3,7 @@
 
 import dask.array as da
 
-__all__ = ['simpson']
+__all__ = ["simpson"]
 
 
 def tupleset(t, i, value):
@@ -38,13 +38,13 @@ def _basic_simpson(y, start, stop, x, dx, axis):
     slice_step = 2  # take every alternate index like 0, 2, 4 or 1, 3, 5
     slice_all = (slice(None),) * nd
     slice0 = tupleset(slice_all, axis, slice(start, stop, slice_step))
-    slice1 = tupleset(slice_all, axis, slice(start+1, stop+1, slice_step))
-    slice2 = tupleset(slice_all, axis, slice(start+2, stop+2, slice_step))
+    slice1 = tupleset(slice_all, axis, slice(start + 1, stop + 1, slice_step))
+    slice2 = tupleset(slice_all, axis, slice(start + 2, stop + 2, slice_step))
 
     # Regularly spaced Simpson's rule
     # See `Composite Simpson's rule` in the wiki page
     if x is None:
-        result = da.sum(y[slice0] + 4*y[slice1] + y[slice2], axis=axis)
+        result = da.sum(y[slice0] + 4 * y[slice1] + y[slice2], axis=axis)
         result *= dx / 3.0
 
     # Irregularly spaced Simpson's rule
@@ -55,39 +55,45 @@ def _basic_simpson(y, start, stop, x, dx, axis):
         h = da.diff(x, axis=axis)
 
         sl0 = tupleset(slice_all, axis, slice(start, stop, slice_step))
-        sl1 = tupleset(slice_all, axis, slice(start+1, stop+1, slice_step))
+        sl1 = tupleset(slice_all, axis, slice(start + 1, stop + 1, slice_step))
 
-        h0 = da.array(h[sl0], dtype='float64')
-        h1 = da.array(h[sl1], dtype='float64')
+        h0 = da.array(h[sl0], dtype="float64")
+        h1 = da.array(h[sl1], dtype="float64")
 
         hsum = h0 + h1
         hprod = h0 * h1
         h0divh1 = da.true_divide(h0, h1, out=da.zeros_like(h0), where=h1 != 0)
 
-        tmp = hsum/6.0 * (
-            y[slice0] * (
-                2.0 - da.true_divide(
-                    1.0, h0divh1,
-                    out=da.zeros_like(h0divh1),
-                    where=h0divh1 != 0
+        tmp = (
+            hsum
+            / 6.0
+            * (
+                y[slice0]
+                * (
+                    2.0
+                    - da.true_divide(
+                        1.0,
+                        h0divh1,
+                        out=da.zeros_like(h0divh1),
+                        where=h0divh1 != 0,
+                    )
                 )
-            )
-            + y[slice1] * (
-                hsum
-                * da.true_divide(
-                    hsum, hprod,
-                    out=da.zeros_like(hsum),
-                    where=hprod != 0
+                + y[slice1]
+                * (
+                    hsum
+                    * da.true_divide(
+                        hsum, hprod, out=da.zeros_like(hsum), where=hprod != 0
+                    )
                 )
+                + y[slice2] * (2.0 - h0divh1)
             )
-            + y[slice2] * (2.0 - h0divh1)
         )
         result = da.sum(tmp, axis=axis)
 
     return result
 
 
-def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
+def simpson(y, x=None, dx=1.0, axis=-1, even="avg"):
     """
     Integrate y(x) using samples along the given axis and the composite
     Simpson's rule. If x is None, spacing of dx is assumed.
@@ -165,12 +171,14 @@ def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
             x = x.reshape(tuple(shapex))
 
         elif len(x.shape) != len(y.shape):
-            raise ValueError("If given, shape of x must be 1-D or the "
-                             "same as y.")
+            raise ValueError(
+                "If given, shape of x must be 1-D or the " "same as y."
+            )
 
         if x.shape[axis] != N:
-            raise ValueError("If given, length of x along axis must be the "
-                             "same as y.")
+            raise ValueError(
+                "If given, length of x along axis must be the " "same as y."
+            )
 
     # Sample size is even i.e. number of intervals is an odd number
     # Simpson's rule doesn't support that, so extra steps.
@@ -181,38 +189,39 @@ def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
         slice1 = (slice(None),) * nd
         slice2 = (slice(None),) * nd
 
-        if even not in ['avg', 'last', 'first']:
+        if even not in ["avg", "last", "first"]:
             raise ValueError(
-                "Parameter 'even' must be 'avg', 'last', or 'first'.")
+                "Parameter 'even' must be 'avg', 'last', or 'first'."
+            )
 
         # Compute using Simpson's rule on first intervals
-        if even in ['avg', 'first']:
+        if even in ["avg", "first"]:
             slice1 = tupleset(slice1, axis, -1)
             slice2 = tupleset(slice2, axis, -2)
 
             # Apply Trapezoidal rule on the last interval
             if x is not None:
                 last_dx = x[slice1] - x[slice2]
-            val += 0.5*last_dx*(y[slice1]+y[slice2])
+            val += 0.5 * last_dx * (y[slice1] + y[slice2])
 
             # Apply Simpson's rule on the first N-2 intervals
-            result = _basic_simpson(y, 0, N-3, x, dx, axis)
+            result = _basic_simpson(y, 0, N - 3, x, dx, axis)
 
         # Compute using Simpson's rule on last set of intervals
-        if even in ['avg', 'last']:
+        if even in ["avg", "last"]:
             slice1 = tupleset(slice1, axis, 0)
             slice2 = tupleset(slice2, axis, 1)
 
             # Apply Trapezoidal rule on the first interval
             if x is not None:
                 first_dx = x[tuple(slice2)] - x[tuple(slice1)]
-            val += 0.5*first_dx*(y[slice2]+y[slice1])
+            val += 0.5 * first_dx * (y[slice2] + y[slice1])
 
             # Apply Simpson's rule on the last N-2 intervals
-            result += _basic_simpson(y, 1, N-2, x, dx, axis)
+            result += _basic_simpson(y, 1, N - 2, x, dx, axis)
 
         # Divide by 2 to get the average value: (first + last)/2
-        if even == 'avg':
+        if even == "avg":
             val /= 2.0
             result /= 2.0
 
@@ -221,7 +230,7 @@ def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
     # Sample size is an odd number i.e. even number of intervals
     # Apply Simpson's rule directly
     else:
-        result = _basic_simpson(y, 0, N-2, x, dx, axis)
+        result = _basic_simpson(y, 0, N - 2, x, dx, axis)
 
     if returnshape:
         x = x.reshape(saveshape)
