@@ -13,8 +13,8 @@ def tupleset(t, i, value):
 
 
 def _basic_simpson(y, start, stop, x, dx, axis):
-    """This is the implementation of Simpson's composite rules for 
-    regularly and irregularly spaced data. Please refer to the 
+    """This is the implementation of Simpson's composite rules for
+    regularly and irregularly spaced data. Please refer to the
     following wiki page for more details:
 
         https://en.wikipedia.org/wiki/Simpson%27s_rule
@@ -41,13 +41,13 @@ def _basic_simpson(y, start, stop, x, dx, axis):
     slice1 = tupleset(slice_all, axis, slice(start+1, stop+1, slice_step))
     slice2 = tupleset(slice_all, axis, slice(start+2, stop+2, slice_step))
 
-    # Regularly spaced Simpson's rule 
+    # Regularly spaced Simpson's rule
     # See `Composite Simpson's rule` in the wiki page
     if x is None:
         result = da.sum(y[slice0] + 4*y[slice1] + y[slice2], axis=axis)
         result *= dx / 3.0
-    
-    # Irregularly spaced Simpson's rule 
+
+    # Irregularly spaced Simpson's rule
     # See `Composite Simpson's rule for irregularly spaced data` in the wiki page
     else:
         # Account for possibly different spacings
@@ -66,19 +66,19 @@ def _basic_simpson(y, start, stop, x, dx, axis):
         tmp = hsum/6.0 * (
             y[slice0] * (
                 2.0 - da.true_divide(
-                    1.0, h0divh1, 
-                    out=da.zeros_like(h0divh1), 
+                    1.0, h0divh1,
+                    out=da.zeros_like(h0divh1),
                     where=h0divh1 != 0
                 )
-            ) 
+            )
             + y[slice1] * (
-                hsum 
+                hsum
                 * da.true_divide(
-                    hsum, hprod, 
-                    out=da.zeros_like(hsum), 
+                    hsum, hprod,
+                    out=da.zeros_like(hsum),
                     where=hprod != 0
                 )
-            ) 
+            )
             + y[slice2] * (2.0 - h0divh1)
         )
         result = da.sum(tmp, axis=axis)
@@ -110,7 +110,7 @@ def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
         'avg' : Average two results:
                 1) use the first N-2 intervals with
                   a trapezoidal rule on the last interval
-                2) use the last N-2 intervals with 
+                2) use the last N-2 intervals with
                   a trapezoidal rule on the first interval.
 
         'first' : Use Simpson's rule for the first N-2 intervals with
@@ -152,7 +152,7 @@ def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
     last_dx = dx
     first_dx = dx
     returnshape = 0
-    
+
     if x is not None:
         x = da.asarray(x)
 
