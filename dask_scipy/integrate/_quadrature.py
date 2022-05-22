@@ -12,10 +12,6 @@ def tupleset(t, i, value):
     return tuple(l)
 
 
-def trapezoid():
-    pass
-
-
 def _basic_simpson(y, start, stop, x, dx, axis):
     """This is the implementation of Simpson's composite rules for 
     regularly and irregularly spaced data. Please refer to the 
@@ -229,9 +225,3 @@ def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
         x = x.reshape(saveshape)
 
     return result
-
-# if __name__ == "__main__":
-#     x = da.arange(1000000001)
-#     y = da.square(x)
-
-#     print(_basic_simpson(y=y, start=0, stop=1000000000, x=x, dx=1, axis=-1).compute())
