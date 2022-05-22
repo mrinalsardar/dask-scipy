@@ -4,9 +4,7 @@ from numpy.testing import assert_equal
 from dask_scipy.integrate import simpson
 
 
-
 def test_simpson():
-    assert 1+1 == 2
     y = da.arange(17)
     assert_equal(simpson(y).compute(), 128)
     assert_equal(simpson(y, dx=0.5).compute(), 64)
@@ -14,9 +12,9 @@ def test_simpson():
 
     y = da.arange(4)
     x = 2**y
-    assert_equal(simpson(y, x=x, even='avg').compute(), 13.875)
-    assert_equal(simpson(y, x=x, even='first').compute(), 13.75)
-    assert_equal(simpson(y, x=x, even='last').compute(), 14)
+    assert_equal(simpson(y, x=x, even="avg").compute(), 13.875)
+    assert_equal(simpson(y, x=x, even="first").compute(), 13.75)
+    assert_equal(simpson(y, x=x, even="last").compute(), 14)
 
     # Tests for checking base case
     x = da.array([3])

@@ -1,1 +1,1 @@
-from ._quadrature import *
+from ._quadrature import simpson  # noqa
