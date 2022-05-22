@@ -7,9 +7,9 @@ __all__ = ['simpson']
 
 
 def tupleset(t, i, value):
-    l = list(t)
-    l[i] = value
-    return tuple(l)
+    lst = list(t)
+    lst[i] = value
+    return tuple(lst)
 
 
 def _basic_simpson(y, start, stop, x, dx, axis):
@@ -35,7 +35,7 @@ def _basic_simpson(y, start, stop, x, dx, axis):
     nd = len(y.shape)
 
     # Calculate Simpson's the 3 slices for composites rules
-    slice_step = 2 # take every alternate index like 0, 2, 4 or 1, 3, 5
+    slice_step = 2  # take every alternate index like 0, 2, 4 or 1, 3, 5
     slice_all = (slice(None),) * nd
     slice0 = tupleset(slice_all, axis, slice(start, stop, slice_step))
     slice1 = tupleset(slice_all, axis, slice(start+1, stop+1, slice_step))
@@ -48,7 +48,8 @@ def _basic_simpson(y, start, stop, x, dx, axis):
         result *= dx / 3.0
 
     # Irregularly spaced Simpson's rule
-    # See `Composite Simpson's rule for irregularly spaced data` in the wiki page
+    # See `Composite Simpson's rule for irregularly spaced data`
+    # in the wiki page
     else:
         # Account for possibly different spacings
         h = da.diff(x, axis=axis)
@@ -146,8 +147,8 @@ def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
 
     """
     y = da.asarray(y)
-    nd = len(y.shape) # Number of dimensions
-    N = y.shape[axis] # Sample size along axis
+    nd = len(y.shape)  # Number of dimensions
+    N = y.shape[axis]  # Sample size along axis
 
     last_dx = dx
     first_dx = dx
@@ -181,7 +182,8 @@ def simpson(y, x=None, dx=1.0, axis=-1, even='avg'):
         slice2 = (slice(None),) * nd
 
         if even not in ['avg', 'last', 'first']:
-            raise ValueError("Parameter 'even' must be 'avg', 'last', or 'first'.")
+            raise ValueError(
+                "Parameter 'even' must be 'avg', 'last', or 'first'.")
 
         # Compute using Simpson's rule on first intervals
         if even in ['avg', 'first']:
