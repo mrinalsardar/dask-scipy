@@ -1,8 +1,10 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 
-# Unit test
+# Unit test / coverage reports
 .pytest_cache/
+.coverage
+.coverage.*
 
 # IDE specific folders
 .vscode/
