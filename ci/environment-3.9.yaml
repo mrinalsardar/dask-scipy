@@ -1,0 +1,9 @@
+name: dask-scipy-3.9
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - dask
+  - numpy
+  - pytest
+  - python=3.9.*
