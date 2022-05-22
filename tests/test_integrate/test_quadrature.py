@@ -1,4 +1,5 @@
 import dask.array as da
+import pytest
 from numpy.testing import assert_equal
 
 from dask_scipy.integrate import simpson
@@ -40,3 +41,17 @@ def test_simpson():
     default_axis = [175.75, 175.75, 11292.25]
     assert_equal(simpson(y, x=x, axis=0).compute(), zero_axis)
     assert_equal(simpson(y, x=x, axis=-1).compute(), default_axis)
+
+    with pytest.raises(ValueError, match="shape of x must be"):
+        simpson(
+            y=da.random.random((5, 5, 5)), x=da.random.random((5, 5))
+        ).compute()
+
+    with pytest.raises(ValueError, match="shape of x must be"):
+        simpson(y=da.random.random((5,)), x=da.random.random((5, 5))).compute()
+
+    with pytest.raises(ValueError, match="length of x along axis must be"):
+        simpson(y=da.arange(10), x=da.arange(15))
+
+    with pytest.raises(ValueError, match="Parameter 'even' must be"):
+        simpson(y=da.arange(10), x=da.arange(10), even="whatever")
