@@ -11,7 +11,7 @@ if [[ ${UPSTREAM_DEV} ]]; then
         git+https://github.com/dask/distributed
 fi
 
-# Install dask-ml
+# Install dask-scipy
 python -m pip install --quiet --no-deps -e .
 
 echo mamba list
