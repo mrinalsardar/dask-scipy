@@ -1,11 +1,12 @@
-Dask-Scipy
+Dask-SciPy
 ==========
 
 |Build Status| |Coverage|
 
-Dask-Scipy is Scipy using Dask Array for parallel computing.
+Dask-SciPy is SciPy using Dask_ Array_ for parallel computing.
 
-.. _documentation: https://dask.org
+.. _Dask: https://dask.org
+.. _Array: https://docs.dask.org/en/stable/array.html
 .. |Build Status| image:: https://github.com/mrinalsardar/dask-scipy/actions/workflows/tests.yml/badge.svg
    :target: https://github.com/mrinalsardar/dask-scipy/actions/workflows/tests.yml
 .. |Coverage| image:: https://codecov.io/gh/mrinalsardar/dask-scipy/branch/main/graph/badge.svg
