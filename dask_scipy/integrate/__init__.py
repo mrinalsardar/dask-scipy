@@ -1,1 +1,1 @@
-from ._quadrature import simpson  # noqa
+from ._quadrature import newton_cotes, simpson  # noqa
