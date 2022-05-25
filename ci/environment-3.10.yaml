@@ -7,3 +7,4 @@ dependencies:
   - numpy
   - pytest
   - python=3.10.*
+  - scipy
