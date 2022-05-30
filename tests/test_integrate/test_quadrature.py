@@ -2,7 +2,7 @@ import dask.array as da
 import pytest
 from numpy.testing import assert_almost_equal, assert_equal
 
-from dask_scipy.integrate import newton_cotes, simpson
+from dask_scipy.integrate import newton_cotes, romb, simpson
 
 
 def test_simpson():
@@ -54,6 +54,10 @@ def test_simpson():
 
     with pytest.raises(ValueError, match="Parameter 'even' must be"):
         simpson(y=da.arange(10), x=da.arange(10), even="whatever").compute()
+
+
+def test_romb():
+    assert_equal(romb(da.arange(17)).compute(), 128)
 
 
 def test_newton_cotes():
